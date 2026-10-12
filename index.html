@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Adventure Island: Learn, Explore & Shine!</title>
+    <style>
+        /* Modern CSS Reset & Variable Definitions */
+        :root {
+            --sky-blue: #70d6ff;
+            --mint-green: #a0e9ec;
+            --grass-green: #71d075;
+            --sunny-yellow: #ffde59;
+            --coral-pink: #ff914d;
+            --lavender: #d0bfff;
+            --cream-bg: #fffdf6;
+            --dark-text: #2c3e50;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.05);
+            --font-main: 'Fredoka', 'Comic Sans MS', 'Chalkboard SE', 'Bubblegum Sans', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--cream-bg);
+            color: var(--dark-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            cursor: default;
+        }
+
+        /* Custom Wand Cursor */
+        .custom-cursor {
+            width: 24px;
+            height: 24px;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s ease;
+        }
+
+        .cursor-sparkle {
+            position: fixed;
+            pointer-events: none;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--sunny-yellow);
+            z-index: 99998;
+            animation: sparkleFade 0.6s linear forwards;
+        }
+
+        @keyframes sparkleFade {
+            0% { opacity: 1; transform: scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: scale(2.5) rotate(180deg); }
+        }
+
+        /* Responsive Main Layout Container */
+        #app-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: linear-gradient(180deg, #e0f7fa 0%, #ffecb3 50%, #f1f8e9 100%);
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+
+        /* Navigation Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 4px solid var(--sunny-yellow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-area h1 {
+            font-size: 1.5rem;
+            color: var(--coral-pink);
+            text-shadow: 2px 2px 0px var(--sunny-yellow);
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            background: white;
+            border: 3px solid var(--sky-blue);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--sky-blue);
+            transition: all 0.15s ease;
+        }
+
+        .btn-icon:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 var(--sky-blue);
+        }
+
+        .btn-primary {
+            background: var(--coral-pink);
+            color: white;
+            border: none;
+            border-bottom: 5px solid #d96b27;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-family: var(--font-main);
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.03);
+            background: #ff8033;
+        }
+
+        .btn-primary:active {
+            transform: translateY(3px);
+            border-bottom-width: 2px;
+        }
+
+        /* Screen Views Container */
+        .screen {
+            display: none;
+            padding: 20px;
+            flex-grow: 1;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10deg); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* WELCOME LANDING SCREEN */
+        #welcome-screen {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        .island-hero-svg {
+            width: 100%;
+            max-height: 280px;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            color: var(--dark-text);
+            margin-top: 15px;
+            text-shadow: 2px 2px 0 var(--sunny-yellow);
+        }
+
+        .welcome-subtitle {
+            font-size: 1.3rem;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        /* MAP MENU SCREEN */
+        .map-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-pill {
+            display: inline-block;
+            background: white;
+            border: 2px solid var(--grass-green);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-top: 8px;
+        }
+
+        .grid-map {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            padding: 10px;
+        }
+
+        .topic-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            text-align: center;
+            border: 4px solid var(--mint-green);
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--coral-pink);
+        }
+
+        .topic-card-icon {
+            width: 90px;
+            height: 90px;
+            margin-bottom: 12px;
+        }
+
+        .topic-card h3 {
+            font-size: 1.15rem;
+            color: var(--dark-text);
+            margin-bottom: 5px;
+        }
+
+        .topic-card .badge-num {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--lavender);
+            color: #4a148c;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        /* TOPIC CONTENT SCREEN LAYOUT */
+        .topic-container {
+            background: white;
+            border-radius: 28px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            border: 4px solid var(--lavender);
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .topic-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px dashed var(--mint-green);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .topic-title-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pip-guide-bubble {
+            background: #fff9c4;
+            border: 2px solid #fbc02d;
+            border-radius: 18px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .pip-avatar {
+            width: 45px;
+            height: 45px;
+            flex-shrink: 0;
+        }
+
+        .remember-card {
+            background: #e1f5fe;
+            border-left: 6px solid var(--sky-blue);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+
+        .remember-card h4 {
+            color: #0277bd;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Interactive Display Playground Stage */
+        .interactive-stage {
+            background: #fdfbf7;
+            border: 3px dashed var(--coral-pink);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 280px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Generic Interactive Controls Container */
+        .interactive-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .chip-btn {
+            background: white;
+            border: 2px solid var(--sky-blue);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-family: var(--font-main);
+            color: var(--dark-text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 0 var(--sky-blue);
+        }
+
+        .chip-btn:hover, .chip-btn.active {
+            background: var(--sky-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tts-btn {
+            background: #fff0f6;
+            border: 2px solid #ff85c0;
+            color: #c41d7f;
+            border-radius: 16px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .tts-btn:hover {
+            background: #ffadd2;
+        }
+
+        /* Bottom Nav Controls */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+
+        /* REVISION OVERVIEW WALL */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .overview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            border: 2px solid var(--mint-green);
+        }
+
+        .overview-card h4 {
+            color: var(--coral-pink);
+            margin-bottom: 8px;
+        }
+
+        /* Specific Interactive Visual Elements */
+        .prep-room-svg {
+            width: 100%;
+            max-width: 500px;
+            height: 240px;
+        }
+
+        .clock-svg {
+            width: 180px;
+            height: 180px;
+        }
+
+        .sentence-block-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .word-block {
+            background: var(--sunny-yellow);
+            border: 3px solid #fbc02d;
+            border-radius: 12px;
+            padding: 10px 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #fbc02d;
+            transition: all 0.3s ease;
+        }
+
+        .word-block.glow {
+            background: #a5d6a7;
+            border-color: #2e7d32;
+            box-shadow: 0 4px 0 #2e7d32;
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .train-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .train-car {
+            flex: 1;
+            min-width: 250px;
+            border-radius: 20px;
+            padding: 15px;
+            color: white;
+            box-shadow: var(--card-shadow);
+        }
+
+        .train-in { background: #29b6f6; }
+        .train-on { background: #ffa726; }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 600px) {
+            .welcome-title { font-size: 1.8rem; }
+            .grid-map { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+            .topic-card { padding: 12px; }
+            .topic-card-icon { width: 60px; height: 60px; }
+            .topic-container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="custom-cursor" id="cursor">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4.5 19.5L15.5 8.5L12 5L1 16L4.5 19.5Z" fill="#8D6E63"/>
+            <path d="M19.5 4.5L15.5 8.5L12 5L16 1L19.5 4.5Z" fill="#ffd54f"/>
+            <polygon points="19.5,1 21,4 24,4.5 21.5,7 22.5,10 19.5,8 16.5,10 17.5,7 15,4.5 18,4" fill="#ffeb3b"/>
+        </svg>
+    </div>
+
+    <div id="app-container">
+        <!-- Persistent Top Header Navigation -->
+        <header>
+            <div class="logo-area" onclick="showScreen('welcome-screen')">
+                <svg width="36" height="36" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#ffde59"/>
+                    <path d="M30 65 Q50 80 70 65" stroke="#ff914d" stroke-width="8" stroke-linecap="round" fill="none"/>
+                    <circle cx="35" cy="40" r="6" fill="#2c3e50"/>
+                    <circle cx="65" cy="40" r="6" fill="#2c3e50"/>
+                </svg>
+                <h1>Adventure Island</h1>
+            </div>
+            <div class="audio-controls">
+                <button class="btn-icon" id="btn-music" title="Toggle Music" onclick="toggleMusic()">🎵</button>
+                <button class="btn-icon" id="btn-sfx" title="Toggle Sound Effects" onclick="toggleSFX()">🔊</button>
+                <button class="btn-icon" title="Map Menu" onclick="showScreen('map-screen')">🗺️</button>
+            </div>
+        </header>
+
+        <!-- SCREEN 1: WELCOME SCREEN -->
+        <div id="welcome-screen" class="screen active">
+            <div class="hero-banner">
+                <svg class="island-hero-svg" viewBox="0 0 800 300">
+                    <defs>
+                        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#b3e5fc"/>
+                            <stop offset="100%" stop-color="#e1f5fe"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="800" height="300" rx="30" fill="url(#skyGrad)"/>
+                    <!-- Rainbow -->
+                    <path d="M 100 280 A 200 200 0 0 1 700 280" fill="none" stroke="#ff8a80" stroke-width="12" opacity="0.6"/>
+                    <path d="M 115 280 A 185 185 0 0 1 685 280" fill="none" stroke="#ffd180" stroke-width="12" opacity="0.6"/>
+                    <path d="M 130 280 A 170 170 0 0 1 670 280" fill="none" stroke="#b9f6ca" stroke-width="12" opacity="0.6"/>
+                    <!-- Island Hill -->
+                    <path d="M 50 300 Q 400 120 750 300 Z" fill="#81c784"/>
+                    <path d="M 150 300 Q 400 170 650 300 Z" fill="#a5d6a7"/>
+                    <!-- Sun -->
+                    <circle cx="700" cy="70" r="35" fill="#ffee58"/>
+                    <g stroke="#ffee58" stroke-width="4">
+                        <line x1="700" y1="20" x2="700" y2="10"/>
+                        <line x1="650" y1="70" x2="640" y2="70"/>
+                        <line x1="735" y1="35" x2="745" y2="25"/>
+                    </g>
+                    <!-- Pip Fox Mascot SVG -->
+                    <g transform="translate(360, 130)">
+                        <path d="M 20 40 Q 40 10 60 40 Q 40 80 20 40 Z" fill="#ff7043"/> <!-- Body -->
+                        <circle cx="40" cy="30" r="22" fill="#ff7043"/> <!-- Head -->
+                        <polygon points="22,15 28,2 38,18" fill="#ff7043"/> <!-- Ear L -->
+                        <polygon points="58,15 52,2 42,18" fill="#ff7043"/> <!-- Ear R -->
+                        <circle cx="33" cy="28" r="3" fill="#000"/> <!-- Eye -->
+                        <circle cx="47" cy="28" r="3" fill="#000"/> <!-- Eye -->
+                        <polygon points="38,34 42,34 40,37" fill="#000"/> <!-- Nose -->
+                        <!-- Hat -->
+                        <path d="M 18 18 Q 40 5 62 18" stroke="#fbc02d" stroke-width="6" fill="none"/>
+                    </g>
+                </svg>
+            </div>
+            <h2 class="welcome-title">Welcome to English Adventure Island!</h2>
+            <p class="welcome-subtitle">Small steps, big English adventures! Explore, see, listen, & learn!</p>
+            <button class="btn-primary" onclick="startAdventure()">
+                <span>🚀 Start Adventure</span>
+            </button>
+        </div>
+
+        <!-- SCREEN 2: MAP MENU SCREEN -->
+        <div id="map-screen" class="screen">
+            <div class="map-header">
+                <h2>English Adventure Map</h2>
+                <div class="progress-pill">🌟 Explore all 11 learning places!</div>
+            </div>
+            <div class="grid-map" id="map-grid">
+                <!-- Javascript will inject 11 Cards dynamically -->
+            </div>
+        </div>
+
+        <!-- SCREEN 3: TOPIC LEARNING PLAYGROUND -->
+        <div id="topic-screen" class="screen">
+            <div class="topic-container">
+                <div class="topic-header-bar">
+                    <div class="topic-title-group">
+                        <span id="topic-icon-large" style="font-size:2.2rem;">🌳</span>
+                        <div>
+                            <h2 id="topic-title">Topic Title</h2>
+                            <span id="topic-subtitle" style="color:#666; font-size:0.9rem;">Year 3 Revision</span>
+                        </div>
+                    </div>
+                    <button class="btn-icon" onclick="showScreen('map-screen')">🗺️</button>
+                </div>
+
+                <!-- Pip Guide Speech Bubble -->
+                <div class="pip-guide-bubble">
+                    <svg class="pip-avatar" viewBox="0 0 80 80">
+                        <circle cx="40" cy="40" r="38" fill="#ffe0b2"/>
+                        <circle cx="40" cy="35" r="22" fill="#ff7043"/>
+                        <circle cx="32" cy="32" r="3" fill="#000"/>
+                        <circle cx="48" cy="32" r="3" fill="#000"/>
+                        <polygon points="38,38 42,38 40,41" fill="#000"/>
+                        <path d="M22,22 Q40,8 58,22" stroke="#fbc02d" stroke-width="5" fill="none"/>
+                    </svg>
+                    <div id="pip-speech-text">Hi there! Let's explore this topic together!</div>
+                </div>
+
+                <!-- Rule Card -->
+                <div class="remember-card">
+                    <h4>💡 Remember This!</h4>
+                    <p id="topic-rule-text">Topic rule summary goes here.</p>
+                </div>
+
+                <!-- Interactive Visual Playground Container -->
+                <div class="interactive-stage" id="interactive-stage">
+                    <!-- Interactive content injected dynamically based on topic -->
+                </div>
+
+                <!-- Recap Section -->
+                <div style="background:#f1f8e9; border-radius:16px; padding:15px; margin-top:20px;">
+                    <h4 style="color:#33691e; margin-bottom:5px;">📝 Let's Remember!</h4>
+                    <ul id="topic-recap-list" style="padding-left:20px; color:#424242; font-size:0.95rem;">
+                        <!-- Recap items -->
+                    </ul>
+                </div>
+
+                <!-- Bottom Navigation Buttons -->
+                <div class="bottom-nav">
+                    <button class="btn-primary" style="background:#90caf9; border-color:#42a5f5;" onclick="navigateTopic(-1)">⬅️ Previous</button>
+                    <button class="btn-primary" onclick="showScreen('overview-screen')">📋 All Notes</button>
+                    <button class="btn-primary" onclick="navigateTopic(1)">Next ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: REVISION OVERVIEW WALL -->
+        <div id="overview-screen" class="screen">
+            <div class="map-header">
+                <h2>📚 Final Revision Overview Wall</h2>
+                <p>Read through all key rules for Year 3 English!</p>
+            </div>
+            <div class="overview-grid" id="overview-grid">
+                <!-- Overview items populated by JS -->
+            </div>
+            <div style="text-align:center; margin-top:25px;">
+                <button class="btn-primary" onclick="showScreen('map-screen')">🗺️ Back to Adventure Map</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* TOPIC DATA DATASTRUCTURE */
+        const topicsData = [
+            {
+                id: 1,
+                title: "Preposition Park",
+                icon: "🏞️",
+                pipMessage: "Welcome to Preposition Park! Prepositions tell us where something is placed.",
+                rule: "Prepositions show location: IN (inside), ON (top), UNDER (below), BEHIND (back), IN FRONT OF (before), BETWEEN (middle), NEXT TO (beside).",
+                recap: [
+                    "Use 'in' when an item is inside.",
+                    "Use 'on' when an item is on top.",
+                    "Use 'between' when there are two items on both sides."
+                ]
+            },
+            {
+                id: 2,
+                title: "Occupation Town",
+                icon: "🏙️",
+                pipMessage: "Let's meet friendly workers in Occupation Town and see what jobs they do!",
+                rule: "An occupation is a job that a person does. We use job titles like teacher, chef, or pilot.",
+                recap: [
+                    "A teacher teaches pupils at school.",
+                    "A firefighter puts out fires.",
+                    "A chef cooks delicious food in a restaurant."
+                ]
+            },
+            {
+                id: 3,
+                title: "Month Garden",
+                icon: "🌸",
+                pipMessage: "Look at the 12 beautiful blooming flowers! Each flower is a month of the year.",
+                rule: "There are 12 months in a year. ALWAYS start month names with a CAPITAL letter!",
+                recap: [
+                    "January is the 1st month of the year.",
+                    "December is the 12th and final month of the year.",
+                    "Capitalize every month: March, August, October!"
+                ]
+            },
+            {
+                id: 4,
+                title: "Sentence Workshop",
+                icon: "🛠️",
+                pipMessage: "Let's build strong sentences with Pip! We put words in order to make complete sense.",
+                rule: "Sentence Rule: Start with a CAPITAL letter, order words (Who + Action + What), and end with a FULL STOP (.)",
+                recap: [
+                    "Always capitalize the first letter.",
+                    "Check that the word order makes complete sense.",
+                    "Don't forget the full stop at the end!"
+                ]
+            },
+            {
+                id: 5,
+                title: "On and In Time Station",
+                icon: "🚉",
+                pipMessage: "All aboard the Time Express! Learn when to use IN or ON for times and dates.",
+                rule: "Use IN for months, years & parts of the day (in May, in the morning). Use ON for days & dates (on Monday, on 12 June).",
+                recap: [
+                    "IN + Months / Years / Times of Day",
+                    "ON + Days of the week / Specific Dates",
+                    "Example: On Monday in July."
+                ]
+            },
+            {
+                id: 6,
+                title: "Direction Detective Trail",
+                icon: "🧭",
+                pipMessage: "Help Pip drive around town by choosing direction words!",
+                rule: "Directions help guide people to places: Go straight, Turn left, Turn right, Turn around, Stop.",
+                recap: [
+                    "Turn left or right to change direction.",
+                    "Go straight to keep walking forward.",
+                    "Turn around to face the opposite direction."
+                ]
+            },
+            {
+                id: 7,
+                title: "Pronoun Pet Corner",
+                icon: "🐾",
+                pipMessage: "Meet cute pets! Object pronouns replace names of people or things receiving an action.",
+                rule: "Subject vs Object: I➔me, You➔you, He➔him, She➔her, It➔it, We➔us, They➔them.",
+                recap: [
+                    "Ali is my friend. I play with HIM.",
+                    "I love my mother. I love HER.",
+                    "The teacher helps Sara and me. She helps US."
+                ]
+            },
+            {
+                id: 8,
+                title: "Some and Any Market",
+                icon: "🛒",
+                pipMessage: "Let's go shopping! We use 'some' and 'any' to talk about amounts.",
+                rule: "Use SOME in positive statements & offers. Use ANY in negative statements and questions.",
+                recap: [
+                    "Positive: I have SOME apples.",
+                    "Negative: There isn't ANY milk.",
+                    "Question: Are there ANY eggs in the fridge?"
+                ]
+            },
+            {
+                id: 9,
+                title: "Plural Forest",
+                icon: "🌲",
+                pipMessage: "Watch items multiply in Plural Forest! Plural means more than one.",
+                rule: "Add -s (books), add -es for -s/-x/-ch/-sh (boxes), change -y to -ies (babies), or use irregulars (child➔children).",
+                recap: [
+                    "1 book ➔ 2 books (+s)",
+                    "1 box ➔ 2 boxes (+es)",
+                    "1 child ➔ 2 children (Irregular)"
+                ]
+            },
+            {
+                id: 10,
+                title: "Has Got & Have Got House",
+                icon: "🏡",
+                pipMessage: "Welcome inside our house! See what everyone HAS GOT or HAS GOT.",
+                rule: "HAS GOT = He, She, It, 1 person. HAVE GOT = I, You, We, They, plural subjects.",
+                recap: [
+                    "She HAS GOT a new bag.",
+                    "They HAVE GOT two cats.",
+                    "I HAVE GOT a blue pencil."
+                ]
+            },
+            {
+                id: 11,
+                title: "Clockwork Castle",
+                icon: "🏰",
+                pipMessage: "Look at the grand clock tower! Let's read time together.",
+                rule: "O'clock = exact hour | Half past = 30 mins after | Quarter past = 15 mins after | Quarter to = 15 mins before.",
+                recap: [
+                    "3:00 ➔ It is three o'clock.",
+                    "7:30 ➔ It is half past seven.",
+                    "9:15 ➔ It is quarter past nine."
+                ]
+            }
+        ];
+
+        let currentTopicIdx = 0;
+        let musicOn = false;
+        let sfxOn = true;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.15) {
+            if (!sfxOn) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e){}
+        }
+
+        function playChime() {
+            if (!sfxOn) return;
+            playTone(523.25, 'sine', 0.1); // C5
+            setTimeout(() => playTone(659.25, 'sine', 0.1), 80); // E5
+            setTimeout(() => playTone(783.99, 'sine', 0.2), 160); // G5
+        }
+
+        function toggleSFX() {
+            sfxOn = !sfxOn;
+            document.getElementById('btn-sfx').textContent = sfxOn ? "🔊" : "🔇";
+            if (sfxOn) playTone(600);
+        }
+
+        let musicInterval = null;
+        function toggleMusic() {
+            musicOn = !musicOn;
+            document.getElementById('btn-music').textContent = musicOn ? "🎵" : "🎶";
+            if (musicOn) {
+                initAudio();
+                let step = 0;
+                const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
+                musicInterval = setInterval(() => {
+                    if (musicOn) playTone(notes[step % notes.length], 'triangle', 0.25);
+                    step++;
+                }, 400);
+            } else {
+                clearInterval(musicInterval);
+            }
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.85; // Slightly slower for primary pupils
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Speech Synthesis not supported in this browser.");
+            }
+        }
+
+        /* Custom Wand Cursor Logic */
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.getElementById('cursor');
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+
+            if (Math.random() < 0.2) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'cursor-sparkle';
+                sparkle.style.left = e.clientX + (Math.random()*12 - 6) + 'px';
+                sparkle.style.top = e.clientY + (Math.random()*12 - 6) + 'px';
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 600);
+            }
+        });
+
+        function showScreen(screenId) {
+            playTone(400, 'sine', 0.08);
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function startAdventure() {
+            initAudio();
+            playChime();
+            showScreen('map-screen');
+        }
+
+        function renderMap() {
+            const grid = document.getElementById('map-grid');
+            grid.innerHTML = '';
+            topicsData.forEach((t, index) => {
+                const card = document.createElement('div');
+                card.className = 'topic-card';
+                card.onclick = () => loadTopic(index);
+                card.innerHTML = `
+                    <div class="badge-num">${index + 1}</div>
+                    <div class="topic-card-icon" style="font-size:3.5rem;">${t.icon}</div>
+                    <h3>${t.title}</h3>
+                    <p style="font-size:0.8rem; color:#666;">Explore & Learn ➔</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function loadTopic(index) {
+            currentTopicIdx = index;
+            const t = topicsData[index];
+            document.getElementById('topic-title').textContent = t.title;
+            document.getElementById('topic-icon-large').textContent = t.icon;
+            document.getElementById('pip-speech-text').textContent = t.pipMessage;
+            document.getElementById('topic-rule-text').textContent = t.rule;
+
+            // Render Recap List
+            const recapUl = document.getElementById('topic-recap-list');
+            recapUl.innerHTML = t.recap.map(r => `<li>${r}</li>`).join('');
+
+            // Load Specific Interactive Visual Playground
+            renderInteractiveStage(t.id);
+
+            showScreen('topic-screen');
+            speakText(t.title);
+        }
+
+        function navigateTopic(direction) {
+            let nextIdx = currentTopicIdx + direction;
+            if (nextIdx < 0) nextIdx = topicsData.length - 1;
+            if (nextIdx >= topicsData.length) nextIdx = 0;
+            loadTopic(nextIdx);
+        }
+
+        function renderInteractiveStage(topicId) {
+            const stage = document.getElementById('interactive-stage');
+            stage.innerHTML = '';
+
+            switch(topicId) {
+                case 1: // Prepositions
+                    stage.innerHTML = `
+                        <div class="interactive-controls">
+                            <button class="chip-btn" onclick="movePrepObject('in', 'The ball is IN the box.')">In</button>
+                            <button class="chip-btn" onclick="movePrepObject('on', 'The ball is ON the table.')">On</button>
+                            <button class="chip-btn" onclick="movePrepObject('under', 'The ball is UNDER the table.')">Under</button>
+                            <button class="chip-btn" onclick="movePrepObject('behind', 'The cat is BEHIND the door.')">Behind</button>
+                            <button class="chip-btn" onclick="movePrepObject('next', 'The ball is NEXT TO the chair.')">Next To</button>
+                        </div>
+                        <svg class="prep-room-svg" viewBox="0 0 500 240">
+                            <!-- Room Background -->
+                            <rect width="500" height="240" fill="#fff8e1" rx="15"/>
+                            <rect x="0" y="180" width="500" height="60" fill="#d7ccc8"/> <!-- Floor -->
+                            <!-- Table -->
+                            <rect x="180" y="120" width="140" height="15" fill="#8d6e63"/>
+                            <rect x="190" y="135" width="12" height="55" fill="#6d4c41"/>
+                            <rect x="298" y="135" width="12" height="55" fill="#6d4c41"/>
+                            <!-- Box -->
+                            <rect x="40" y="130" width="60" height="50" fill="#ffb74d" stroke="#f57c00" stroke-width="2"/>
+                            <!-- Ball (Animated Target) -->
+                            <circle id="prep-ball" cx="70" cy="110" r="16" fill="#e91e63" style="transition: all 0.5s ease;"/>
+                        </svg>
+                        <p id="prep-sentence" style="font-weight:bold; font-size:1.1rem; color:#d81b60; margin-top:10px;">Click a button to see where the ball goes!</p>
+                    `;
+                    break;
+
+                case 2: // Occupations
+                    stage.innerHTML = `
+                        <div class="interactive-controls" id="job-btns">
+                            <!-- Populated dynamically -->
+                        </div>
+                        <div id="job-display-card" style="text-align:center; padding:15px; background:white; border-radius:18px; border:2px solid #a0e9ec; width:100%; max-width:400px;">
+                            <div id="job-icon" style="font-size:4rem;">👩‍🏫</div>
+                            <h3 id="job-name" style="color:#00796b;">Teacher</h3>
+                            <p id="job-desc" style="margin-top:5px;">Teaches pupils at school.</p>
+                            <button class="tts-btn" style="margin-top:10px;" onclick="speakText(document.getElementById('job-name').textContent + '. ' + document.getElementById('job-desc').textContent)">🔊 Listen Pronunciation</button>
+                        </div>
+                    `;
+                    const jobs = [
+                        { name: "Teacher", icon: "👩‍🏫", desc: "Teaches pupils at school." },
+                        { name: "Doctor", icon: "👨‍⚕️", desc: "Helps sick people in hospital." },
+                        { name: "Chef", icon: "👨‍🍳", desc: "Cooks food in a restaurant." },
+                        { name: "Pilot", icon: "👨‍✈️", desc: "Flies an aeroplane in the sky." },
+                        { name: "Firefighter", icon: "👨‍🚒", desc: "Puts out fires and saves people." }
+                    ];
+                    const jobBtnsContainer = document.getElementById('job-btns');
+                    jobs.forEach(j => {
+                        const btn = document.createElement('button');
+                        btn.className = 'chip-btn';
+                        btn.textContent = j.name;
+                        btn.onclick = () => {
+                            document.getElementById('job-icon').textContent = j.icon;
+                            document.getElementById('job-name').textContent = j.name;
+                            document.getElementById('job-desc').textContent = j.desc;
+                            playChime();
+                            speakText(`${j.name}. ${j.desc}`);
+                        };
+                        jobBtnsContainer.appendChild(btn);
+                    });
+                    break;
+
+                case 3: // Months
+                    stage.innerHTML = `
+                        <p style="margin-bottom:10px; font-weight:bold;">Click any flower month to make it bloom!</p>
+                        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; width:100%;">
+                            ${['January','February','March','April','May','June','July','August','September','October','November','December'].map(m => `
+                                <button class="chip-btn" style="display:flex; flex-direction:column; align-items:center;" onclick="bloomMonth('${m}')">
+                                    <span style="font-size:1.5rem;">🌸</span>
+                                    <span>${m}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                        <p id="month-display" style="font-size:1.3rem; font-weight:bold; color:#7b1fa2; margin-top:15px;"></p>
+                    `;
+                    break;
+
+                case 4: // Sentence Workshop
+                    stage.innerHTML = `
+                        <p style="margin-bottom:10px;">Click sentence to watch words glow in sequence!</p>
+                        <div class="sentence-block-container" id="sentence-blocks">
+                            <div class="word-block">This</div>
+                            <div class="word-block">is</div>
+                            <div class="word-block">my</div>
+                            <div class="word-block">teacher.</div>
+                        </div>
+                        <button class="btn-primary" style="margin-top:20px; font-size:1rem;" onclick="animateSentence()">▶ Play Sentence Sequence</button>
+                    `;
+                    break;
+
+                case 5: // On and In
+                    stage.innerHTML = `
+                        <div class="train-container">
+                            <div class="train-car train-in">
+                                <h3>🚂 Use IN</h3>
+                                <p style="margin-top:8px;">• Months: <b>in May</b></p>
+                                <p>• Years: <b>in 2026</b></p>
+                                <p>• Parts of day: <b>in the morning</b></p>
+                            </div>
+                            <div class="train-car train-on">
+                                <h3>🚃 Use ON</h3>
+                                <p style="margin-top:8px;">• Days: <b>on Monday</b></p>
+                                <p>• Dates: <b>on 12 June</b></p>
+                                <p>• Special days: <b>on my birthday</b></p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 6: // Directions
+                    stage.innerHTML = `
+                        <div class="interactive-controls">
+                            <button class="chip-btn" onclick="moveCar('straight')">⬆️ Go Straight</button>
+                            <button class="chip-btn" onclick="moveCar('left')">⬅️ Turn Left</button>
+                            <button class="chip-btn" onclick="moveCar('right')">➡️ Turn Right</button>
+                            <button class="chip-btn" onclick="moveCar('around')">🔄 Turn Around</button>
+                        </div>
+                        <svg viewBox="0 0 400 180" style="width:100%; max-width:450px; background:#e8f5e9; border-radius:15px;">
+                            <!-- Road Grid -->
+                            <rect x="170" y="0" width="60" height="180" fill="#9e9e9e"/>
+                            <rect x="0" y="60" width="400" height="60" fill="#9e9e9e"/>
+                            <!-- Car / Character -->
+                            <g id="dir-car" transform="translate(185, 80)" style="transition: all 0.5s ease;">
+                                <circle cx="15" cy="15" r="14" fill="#ff1744"/>
+                                <text x="10" y="20" fill="white" font-weight="bold">🦊</text>
+                            </g>
+                        </svg>
+                    `;
+                    break;
+
+                case 7: // Pronouns
+                    stage.innerHTML = `
+                        <div class="interactive-controls">
+                            <button class="chip-btn" onclick="showPronoun('Ali likes Sara.', 'Ali likes HER.')">She ➔ Her</button>
+                            <button class="chip-btn" onclick="showPronoun('I help my father.', 'I help HIM.')">He ➔ Him</button>
+                            <button class="chip-btn" onclick="showPronoun('Teacher helps pupils.', 'Teacher helps THEM.')">They ➔ Them</button>
+                            <button class="chip-btn" onclick="showPronoun('Mother calls brother and me.', 'Mother calls US.')">We ➔ Us</button>
+                        </div>
+                        <div style="background:white; padding:20px; border-radius:18px; text-align:center; border:2px solid #d0bfff; width:100%; max-width:400px;">
+                            <p id="pronoun-orig" style="color:#777; text-decoration:line-through;">Ali likes Sara.</p>
+                            <h3 id="pronoun-new" style="color:#4a148c; margin-top:5px;">Ali likes HER.</h3>
+                            <button class="tts-btn" style="margin-top:10px;" onclick="speakText(document.getElementById('pronoun-new').textContent)">🔊 Listen</button>
+                        </div>
+                    `;
+                    break;
+
+                case 8: // Some & Any
+                    stage.innerHTML = `
+                        <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; width:100%;">
+                            <div style="background:#e8f5e9; border:3px solid #66bb6a; border-radius:18px; padding:15px; flex:1; min-width:200px;">
+                                <h3 style="color:#2e7d32;">🛒 SOME Basket</h3>
+                                <p style="font-size:0.9rem; margin:8px 0;">Used for <b>positive</b> sentences:</p>
+                                <p>• I have <b>some</b> apples. 🍎</p>
+                                <p>• Would you like <b>some</b> water? 💧</p>
+                            </div>
+                            <div style="background:#f3e5f5; border:3px solid #ab47bc; border-radius:18px; padding:15px; flex:1; min-width:200px;">
+                                <h3 style="color:#6a1b9a;">🛒 ANY Basket</h3>
+                                <p style="font-size:0.9rem; margin:8px 0;">Used for <b>negatives & questions</b>:</p>
+                                <p>• There isn't <b>any</b> milk. 🥛</p>
+                                <p>• Are there <b>any</b> eggs? 🥚</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 9: // Plural Forest
+                    stage.innerHTML = `
+                        <div class="interactive-controls">
+                            <button class="chip-btn" onclick="spawnPlural('book', 'books', '📚')">1 Book ➔ Books (+s)</button>
+                            <button class="chip-btn" onclick="spawnPlural('box', 'boxes', '📦')">1 Box ➔ Boxes (+es)</button>
+                            <button class="chip-btn" onclick="spawnPlural('baby', 'babies', '👶')">1 Baby ➔ Babies (-ies)</button>
+                            <button class="chip-btn" onclick="spawnPlural('child', 'children', '🧒')">1 Child ➔ Children (Irregular)</button>
+                        </div>
+                        <div style="text-align:center; padding:15px; background:white; border-radius:18px; width:100%; max-width:400px; border:2px solid #81c784;">
+                            <div id="plural-icons" style="font-size:3rem;">📚</div>
+                            <h3 id="plural-text" style="color:#2e7d32;">1 book ➔ 3 books</h3>
+                        </div>
+                    `;
+                    break;
+
+                case 10: // Has Got / Have Got
+                    stage.innerHTML = `
+                        <div style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; width:100%;">
+                            <div style="background:#e3f2fd; border:3px solid #42a5f5; border-radius:18px; padding:15px; flex:1; min-width:200px;">
+                                <h3 style="color:#1565c0;">HAVE GOT</h3>
+                                <p style="margin-top:8px;">Use with: <b>I, You, We, They</b></p>
+                                <p style="margin-top:5px; font-weight:bold; color:#0d47a1;">• I have got a blue pencil.</p>
+                                <p style="font-weight:bold; color:#0d47a1;">• They have got two cats.</p>
+                            </div>
+                            <div style="background:#fbe9e7; border:3px solid #ff7043; border-radius:18px; padding:15px; flex:1; min-width:200px;">
+                                <h3 style="color:#d84315;">HAS GOT</h3>
+                                <p style="margin-top:8px;">Use with: <b>He, She, It, 1 Name</b></p>
+                                <p style="margin-top:5px; font-weight:bold; color:#bf360c;">• She has got a bag.</p>
+                                <p style="font-weight:bold; color:#bf360c;">• He has got a bicycle.</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 11: // Clockwork Castle
+                    stage.innerHTML = `
+                        <div class="interactive-controls">
+                            <button class="chip-btn" onclick="setClock(3, 0, 'It is three o\'clock.')">3:00</button>
+                            <button class="chip-btn" onclick="setClock(7, 30, 'It is half past seven.')">7:30</button>
+                            <button class="chip-btn" onclick="setClock(9, 15, 'It is quarter past nine.')">9:15</button>
+                            <button class="chip-btn" onclick="setClock(4, 45, 'It is quarter to five.')">4:45</button>
+                        </div>
+                        <div style="display:flex; flex-direction:column; align-items:center;">
+                            <svg class="clock-svg" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" fill="white" stroke="#2c3e50" stroke-width="4"/>
+                                <circle cx="50" cy="50" r="3" fill="#000"/>
+                                <!-- Clock Hands -->
+                                <line id="hour-hand" x1="50" y1="50" x2="50" y2="25" stroke="#e91e63" stroke-width="4" stroke-linecap="round"/>
+                                <line id="minute-hand" x1="50" y1="50" x2="50" y2="15" stroke="#2196f3" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                            <h3 id="clock-text" style="margin-top:10px; color:#2c3e50;">It is three o'clock.</h3>
+                            <button class="tts-btn" style="margin-top:5px;" onclick="speakText(document.getElementById('clock-text').textContent)">🔊 Listen Time</button>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        /* INTERACTIVE HELPER FUNCTIONS */
+        function movePrepObject(type, text) {
+            const ball = document.getElementById('prep-ball');
+            const sent = document.getElementById('prep-sentence');
+            sent.textContent = text;
+            playChime();
+            speakText(text);
+
+            if (type === 'in') { ball.setAttribute('cx', '70'); ball.setAttribute('cy', '150'); }
+            else if (type === 'on') { ball.setAttribute('cx', '250'); ball.setAttribute('cy', '104'); }
+            else if (type === 'under') { ball.setAttribute('cx', '250'); ball.setAttribute('cy', '165'); }
+            else if (type === 'behind') { ball.setAttribute('cx', '30'); ball.setAttribute('cy', '80'); }
+            else if (type === 'next') { ball.setAttribute('cx', '350'); ball.setAttribute('cy', '165'); }
+        }
+
+        function bloomMonth(monthName) {
+            playTone(500);
+            const disp = document.getElementById('month-display');
+            disp.textContent = `🌸 ${monthName} (Month of the Year)`;
+            speakText(monthName);
+        }
+
+        function animateSentence() {
+            const blocks = document.querySelectorAll('.word-block');
+            blocks.forEach((b, i) => {
+                setTimeout(() => {
+                    b.classList.add('glow');
+                    playTone(300 + i * 100);
+                    setTimeout(() => b.classList.remove('glow'), 600);
+                }, i * 400);
+            });
+            setTimeout(() => {
+                speakText("This is my teacher.");
+            }, 1800);
+        }
+
+        function moveCar(dir) {
+            const car = document.getElementById('dir-car');
+            playTone(450);
+            if (dir === 'straight') car.setAttribute('transform', 'translate(185, 30)');
+            else if (dir === 'left') car.setAttribute('transform', 'translate(80, 80)');
+            else if (dir === 'right') car.setAttribute('transform', 'translate(280, 80)');
+            else if (dir === 'around') car.setAttribute('transform', 'translate(185, 140)');
+        }
+
+        function showPronoun(orig, newTxt) {
+            document.getElementById('pronoun-orig').textContent = orig;
+            document.getElementById('pronoun-new').textContent = newTxt;
+            playChime();
+            speakText(newTxt);
+        }
+
+        function spawnPlural(sing, plur, emoji) {
+            document.getElementById('plural-icons').textContent = `${emoji} ${emoji} ${emoji}`;
+            document.getElementById('plural-text').textContent = `1 ${sing} ➔ 3 ${plur}`;
+            playChime();
+            speakText(`3 ${plur}`);
+        }
+
+        function setClock(h, m, text) {
+            const hourHand = document.getElementById('hour-hand');
+            const minHand = document.getElementById('minute-hand');
+            document.getElementById('clock-text').textContent = text;
+
+            const mAngle = m * 6;
+            const hAngle = (h % 12) * 30 + m * 0.5;
+
+            minHand.setAttribute('transform', `rotate(${mAngle}, 50, 50)`);
+            hourHand.setAttribute('transform', `rotate(${hAngle}, 50, 50)`);
+
+            playChime();
+            speakText(text);
+        }
+
+        /* Render Revision Overview Wall */
+        function renderOverviewWall() {
+            const grid = document.getElementById('overview-grid');
+            grid.innerHTML = '';
+            topicsData.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'overview-card';
+                card.innerHTML = `
+                    <h4>${t.icon} ${t.id}. ${t.title}</h4>
+                    <p style="font-size:0.9rem; color:#444;">${t.rule}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        /* Initialize Page on Load */
+        window.onload = function() {
+            renderMap();
+            renderOverviewWall();
+        };
+    </script>
+</body>
+</html>
